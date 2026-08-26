@@ -1,0 +1,220 @@
+import { useEffect, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { ArrowDownRight, ArrowUpRight, Menu, Volume2, VolumeX, X } from 'lucide-react'
+import { siteContent } from './siteContent'
+
+const logo = '/peregen-orbital-logo.png'
+
+const fadeUp = (reduce, delay = 0) => ({
+  initial: reduce ? false : { opacity: 0, y: 28 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.25 },
+  transition: { duration: reduce ? 0 : 0.7, delay },
+})
+
+function LogoMotion({ reduce }) {
+  return (
+    <div className="logo-stage" aria-label="Animated Peregen orbital logo">
+      <div className="logo-halo logo-halo--one" />
+      <div className="logo-halo logo-halo--two" />
+      <motion.video
+        className="logo-video"
+        src="/animate_logo.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster={logo}
+        aria-label="Peregen orbital logo animation"
+        animate={reduce ? undefined : { y: [0, -8, 0], rotate: [-1, 1, -1] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <span className="logo-caption">A system for becoming more capable.</span>
+    </div>
+  )
+}
+
+function OrbitalCursor({ reduce }) {
+  const [cursor, setCursor] = useState({ x: -100, y: -100 })
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    if (!window.matchMedia('(pointer: fine)').matches) return undefined
+
+    const canvas = canvasRef.current
+    const context = canvas.getContext('2d')
+    const particles = []
+    const cometImage = new Image()
+    cometImage.src = siteContent.interactions.cometAsset
+    const cometBuffer = document.createElement('canvas')
+    cometBuffer.width = 220
+    cometBuffer.height = 220
+    const cometBufferContext = cometBuffer.getContext('2d', { willReadFrequently: true })
+    let cometDirection = 0
+    let pointerPosition = { x: -100, y: -100 }
+    let lastPointer = null
+    let frame
+    let pixelRatio = Math.min(window.devicePixelRatio || 1, 2)
+    const resize = () => {
+      pixelRatio = Math.min(window.devicePixelRatio || 1, 2)
+      canvas.width = window.innerWidth * pixelRatio
+      canvas.height = window.innerHeight * pixelRatio
+      canvas.style.width = `${window.innerWidth}px`
+      canvas.style.height = `${window.innerHeight}px`
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+    }
+    const handleMove = (event) => {
+      setCursor({ x: event.clientX, y: event.clientY })
+      pointerPosition = { x: event.clientX, y: event.clientY }
+      if (!lastPointer) { lastPointer = { x: event.clientX, y: event.clientY }; return }
+      const dx = event.clientX - lastPointer.x
+      const dy = event.clientY - lastPointer.y
+      const distance = Math.hypot(dx, dy)
+      if (distance < 1) return
+      const direction = Math.atan2(dy, dx)
+      cometDirection = direction
+      const perpendicular = direction + Math.PI / 2
+      const count = reduce ? 4 : 17
+      for (let index = 0; index < count; index += 1) {
+        const tailDistance = Math.random() * Math.min(220, 36 + distance * 6)
+        const spread = (Math.random() - 0.5) * Math.min(42, 4 + tailDistance * 0.34)
+        const x = event.clientX - Math.cos(direction) * tailDistance + Math.cos(perpendicular) * spread
+        const y = event.clientY - Math.sin(direction) * tailDistance + Math.sin(perpendicular) * spread
+        const drift = (Math.random() - 0.5) * 0.75
+        const speed = 0.18 + Math.random() * 0.9
+        const hues = [190, 198, 210, 224, 244]
+        particles.push({ x, y, vx: -Math.cos(direction) * speed + Math.cos(perpendicular) * drift, vy: -Math.sin(direction) * speed + Math.sin(perpendicular) * drift, life: 1, size: 0.45 + Math.random() * 1.65, hue: hues[Math.floor(Math.random() * hues.length)] })
+      }
+      lastPointer = { x: event.clientX, y: event.clientY }
+    }
+
+    const draw = () => {
+      context.clearRect(0, 0, window.innerWidth, window.innerHeight)
+      if (cometImage.complete) {
+        const cometSize = reduce ? 105 : 185
+        cometBufferContext.clearRect(0, 0, cometBuffer.width, cometBuffer.height)
+        cometBufferContext.drawImage(cometImage, 0, 0, cometBuffer.width, cometBuffer.height)
+        const cometPixels = cometBufferContext.getImageData(0, 0, cometBuffer.width, cometBuffer.height)
+        for (let pixel = 0; pixel < cometPixels.data.length; pixel += 4) {
+          const brightness = Math.max(cometPixels.data[pixel], cometPixels.data[pixel + 1], cometPixels.data[pixel + 2])
+          cometPixels.data[pixel + 3] = brightness < 18 ? 0 : Math.min(255, Math.round((brightness - 18) * 1.8))
+        }
+        cometBufferContext.putImageData(cometPixels, 0, 0)
+        context.save()
+        context.globalCompositeOperation = 'screen'
+        context.globalAlpha = reduce ? 0.55 : 0.82
+        context.translate(pointerPosition.x, pointerPosition.y)
+        context.rotate(cometDirection + Math.PI + 0.42)
+        context.drawImage(cometBuffer, -cometSize / 2, -cometSize / 2, cometSize, cometSize)
+        context.restore()
+      }
+      for (let index = particles.length - 1; index >= 0; index -= 1) {
+        const particle = particles[index]
+        particle.x += particle.vx
+        particle.y += particle.vy
+        particle.vx *= 0.985
+        particle.vy += 0.012
+        particle.life -= reduce ? 0.03 : 0.015
+        if (particle.life <= 0) { particles.splice(index, 1); continue }
+        context.save()
+        context.globalAlpha = particle.life * 0.82
+        context.strokeStyle = `hsla(${particle.hue}, 100%, 78%, ${particle.life})`
+        context.shadowColor = `hsla(${particle.hue}, 100%, 70%, .9)`
+        context.shadowBlur = 8
+        context.lineWidth = particle.size * 0.8
+        context.beginPath()
+        context.moveTo(particle.x, particle.y)
+        context.lineTo(particle.x - particle.vx * 5, particle.y - particle.vy * 5)
+        context.stroke()
+        context.fillStyle = `hsla(${particle.hue}, 100%, 82%, ${particle.life})`
+        context.beginPath()
+        context.arc(particle.x, particle.y, particle.size * 0.8, 0, Math.PI * 2)
+        context.fill()
+        context.restore()
+      }
+      frame = requestAnimationFrame(draw)
+    }
+
+    resize()
+    window.addEventListener('resize', resize)
+    window.addEventListener('pointermove', handleMove)
+    frame = requestAnimationFrame(draw)
+    return () => { window.removeEventListener('resize', resize); window.removeEventListener('pointermove', handleMove); cancelAnimationFrame(frame) }
+  }, [reduce])
+
+  return (
+    <div className="cursor-system" aria-label={siteContent.interactions.cursorLabel} aria-hidden="true">
+      <canvas ref={canvasRef} className="cursor-canvas" aria-label={siteContent.interactions.cursorTrail} />
+      <span className="cursor-orbit" style={{ transform: `translate3d(${cursor.x}px, ${cursor.y}px, 0)` }}><img src={logo} alt="" /></span>
+    </div>
+  )
+}
+
+function App() {
+  const reduce = useReducedMotion()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [email, setEmail] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+  const [soundOn, setSoundOn] = useState(false)
+
+  const toggleSound = () => {
+    const nextSoundState = !soundOn
+    document.querySelectorAll('video').forEach((video) => { video.muted = !nextSoundState })
+    setSoundOn(nextSoundState)
+  }
+
+  const submitEmail = (event) => {
+    event.preventDefault()
+    if (!email.trim()) return
+    setSubmitted(true)
+    setEmail('')
+  }
+
+  return (
+    <main className="site-shell">
+      <div className="grain" aria-hidden="true" />
+      <OrbitalCursor reduce={reduce} />
+      <header className="site-header">
+        <a className="brand" href="#top" aria-label="Peregen home"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>Peregen <span className="brand-name-ai">AI</span></span></a>
+        <nav className={`main-nav ${menuOpen ? 'main-nav--open' : ''}`}>
+          <a href="#why" onClick={() => setMenuOpen(false)}>Why Peregen</a>
+          <a href="#principles" onClick={() => setMenuOpen(false)}>Principles</a>
+          <a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
+        </nav>
+        <button className={`sound-toggle ${soundOn ? 'sound-toggle--active' : ''}`} type="button" onClick={toggleSound} aria-pressed={soundOn} aria-label={soundOn ? siteContent.interactions.soundOff : siteContent.interactions.soundOn}><span className="sound-dot" />{soundOn ? <Volume2 size={15} /> : <VolumeX size={15} />}<span className="sound-label">{soundOn ? 'Sound on' : 'Sound off'}</span></button>
+        <a className="header-cta" href="#contact">Start a conversation <ArrowUpRight size={15} /></a>
+        <button className="menu-toggle" type="button" aria-label="Toggle menu" onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X size={20} /> : <Menu size={20} />}</button>
+      </header>
+
+      <section className="hero" id="top">
+        <div className="hero-copy">
+          <motion.p className="eyebrow" {...fadeUp(reduce)}>{siteContent.hero.eyebrow}</motion.p>
+          <motion.h1 {...fadeUp(reduce, 0.08)}>{siteContent.hero.title}</motion.h1>
+          <motion.p className="hero-description" {...fadeUp(reduce, 0.16)}>{siteContent.hero.description}</motion.p>
+          <motion.div className="hero-actions" {...fadeUp(reduce, 0.24)}><a className="button button--dark" href="#contact">Explore Peregen <ArrowUpRight size={17} /></a><a className="text-link" href="#why">Scroll to discover <ArrowDownRight size={16} /></a></motion.div>
+        </div>
+        <motion.div className="hero-visual" {...fadeUp(reduce, 0.18)}><LogoMotion reduce={reduce} /><div className="hero-index">01 <span>/</span> 04</div></motion.div>
+        <div className="hero-footer"><span>Built for the space between human instinct and machine scale.</span><span className="scroll-note">Scroll for more ↓</span></div>
+      </section>
+
+      <section className="manifesto section-pad" id="why">
+        <motion.div className="section-kicker" {...fadeUp(reduce)}>01 / The premise</motion.div>
+        <div className="manifesto-grid"><motion.p className="manifesto-label" {...fadeUp(reduce, 0.08)}>Peregen is not here to replace the human point of view.</motion.p><motion.h2 {...fadeUp(reduce, 0.14)}>{siteContent.manifesto}</motion.h2></div>
+      </section>
+
+      <section className="principles section-pad" id="principles">
+        <motion.div className="section-heading" {...fadeUp(reduce)}><div className="section-kicker">02 / The approach</div><h2>Intelligence with a point of view.</h2></motion.div>
+        <div className="principle-list">{siteContent.principles.map((principle, index) => <motion.article className={`principle-card principle-card--${principle.accent}`} key={principle.title} {...fadeUp(reduce, index * 0.08)}><span className="principle-number">{principle.number}</span><div className="principle-orbit" aria-hidden="true"><span /><span /><span /></div><div className="principle-copy"><h3>{principle.title}</h3><p>{principle.description}</p></div><ArrowUpRight className="principle-arrow" size={22} /></motion.article>)}</div>
+      </section>
+
+      <section className="capabilities section-pad"><motion.div className="capabilities-intro" {...fadeUp(reduce)}><div className="section-kicker">03 / The work</div><h2>Bring the hard thing.</h2><p>From the first question to the final decision, Peregen helps you make meaningful progress.</p></motion.div><div className="capability-list">{siteContent.capabilities.map(([number, title, description]) => <motion.a href="#contact" className="capability-row" key={number} {...fadeUp(reduce)}><span>{number}</span><h3>{title}</h3><p>{description}</p><ArrowUpRight size={19} /></motion.a>)}</div></section>
+
+      <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">04 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle.</p><form className="signup-form" onSubmit={submitEmail}><label className="sr-only" htmlFor="email">Email address</label><input id="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} required /><button className="button button--light" type="submit">{submitted ? 'You’re on the list' : 'Get early access'} <ArrowUpRight size={17} /></button></form></motion.div></section>
+
+      <footer className="site-footer"><div className="brand"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>Peregen <span className="brand-name-ai">AI</span></span></div><span>Adaptive intelligence for human work.</span><span>© 2026 Peregen</span></footer>
+    </main>
+  )
+}
+
+export default App
