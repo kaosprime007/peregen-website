@@ -14,7 +14,7 @@ const fadeUp = (reduce, delay = 0) => ({
 
 function LogoMotion({ reduce }) {
   return (
-    <div className="logo-stage" aria-label="Animated Peregen orbital logo">
+    <div className="logo-stage" aria-label="Animated PeregenAI orbital logo">
       <div className="logo-halo logo-halo--one" />
       <div className="logo-halo logo-halo--two" />
       <motion.video
@@ -26,7 +26,7 @@ function LogoMotion({ reduce }) {
         playsInline
         preload="auto"
         poster={logo}
-        aria-label="Peregen orbital logo animation"
+        aria-label="PeregenAI orbital logo animation"
         animate={reduce ? undefined : { y: [0, -8, 0], rotate: [-1, 1, -1] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -151,6 +151,19 @@ function OrbitalCursor({ reduce }) {
   )
 }
 
+function SocialLinks() {
+  return (
+    <nav className="social-links" aria-label="Social media">
+      <a href={siteContent.social.facebook} target="_blank" rel="noreferrer" aria-label="PeregenAI on Facebook">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-3.3 0-5 1.9-5 5v3H6v4h3v8h4v-8h3.3l.7-4H13V9c0-.7.3-1 1-1Z" fill="currentColor" /></svg>
+      </a>
+      <a href={siteContent.social.linkedin} target="_blank" rel="noreferrer" aria-label="PeregenAI on LinkedIn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 7.1A2.1 2.1 0 1 0 5.2 3a2.1 2.1 0 0 0 0 4.1ZM3.4 21h3.6V9H3.4v12ZM9.2 9v12h3.6v-6.3c0-1.7.3-3.3 2.4-3.3 2 0 2 1.9 2 3.4V21h3.6v-6.9c0-3.4-.7-6-4.7-6-1.9 0-3.2 1-3.7 1.9h-.1V9H9.2Z" fill="currentColor" /></svg>
+      </a>
+    </nav>
+  )
+}
+
 function App() {
   const reduce = useReducedMotion()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -176,9 +189,9 @@ function App() {
       <div className="grain" aria-hidden="true" />
       <OrbitalCursor reduce={reduce} />
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Peregen home"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>Peregen <span className="brand-name-ai">AI</span></span></a>
+        <a className="brand" href="#top" aria-label="PeregenAI home"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>PeregenAI</span></a>
         <nav className={`main-nav ${menuOpen ? 'main-nav--open' : ''}`}>
-          <a href="#why" onClick={() => setMenuOpen(false)}>Why Peregen</a>
+          <a href="#why" onClick={() => setMenuOpen(false)}>Why PeregenAI</a>
           <a href="#principles" onClick={() => setMenuOpen(false)}>Principles</a>
           <a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
         </nav>
@@ -192,7 +205,7 @@ function App() {
           <motion.p className="eyebrow" {...fadeUp(reduce)}>{siteContent.hero.eyebrow}</motion.p>
           <motion.h1 {...fadeUp(reduce, 0.08)}>{siteContent.hero.title}</motion.h1>
           <motion.p className="hero-description" {...fadeUp(reduce, 0.16)}>{siteContent.hero.description}</motion.p>
-          <motion.div className="hero-actions" {...fadeUp(reduce, 0.24)}><a className="button button--dark" href="#contact">Explore Peregen <ArrowUpRight size={17} /></a><a className="text-link" href="#why">Scroll to discover <ArrowDownRight size={16} /></a></motion.div>
+          <motion.div className="hero-actions" {...fadeUp(reduce, 0.24)}><a className="button button--dark" href="#contact">Explore PeregenAI <ArrowUpRight size={17} /></a><a className="text-link" href="#why">Scroll to discover <ArrowDownRight size={16} /></a></motion.div>
         </div>
         <motion.div className="hero-visual" {...fadeUp(reduce, 0.18)}><LogoMotion reduce={reduce} /><div className="hero-index">01 <span>/</span> 04</div></motion.div>
         <div className="hero-footer"><span>Built for the space between human instinct and machine scale.</span><span className="scroll-note">Scroll for more ↓</span></div>
@@ -200,7 +213,7 @@ function App() {
 
       <section className="manifesto section-pad" id="why">
         <motion.div className="section-kicker" {...fadeUp(reduce)}>01 / The premise</motion.div>
-        <div className="manifesto-grid"><motion.p className="manifesto-label" {...fadeUp(reduce, 0.08)}>Peregen is not here to replace the human point of view.</motion.p><motion.h2 {...fadeUp(reduce, 0.14)}>{siteContent.manifesto}</motion.h2></div>
+        <div className="manifesto-grid"><motion.p className="manifesto-label" {...fadeUp(reduce, 0.08)}>PeregenAI is not here to replace the human point of view.</motion.p><motion.h2 {...fadeUp(reduce, 0.14)}>{siteContent.manifesto}</motion.h2></div>
       </section>
 
       <section className="principles section-pad" id="principles">
@@ -208,11 +221,11 @@ function App() {
         <div className="principle-list">{siteContent.principles.map((principle, index) => <motion.article className={`principle-card principle-card--${principle.accent}`} key={principle.title} {...fadeUp(reduce, index * 0.08)}><span className="principle-number">{principle.number}</span><div className="principle-orbit" aria-hidden="true"><span /><span /><span /></div><div className="principle-copy"><h3>{principle.title}</h3><p>{principle.description}</p></div><ArrowUpRight className="principle-arrow" size={22} /></motion.article>)}</div>
       </section>
 
-      <section className="capabilities section-pad"><motion.div className="capabilities-intro" {...fadeUp(reduce)}><div className="section-kicker">03 / The work</div><h2>Bring the hard thing.</h2><p>From the first question to the final decision, Peregen helps you make meaningful progress.</p></motion.div><div className="capability-list">{siteContent.capabilities.map(([number, title, description]) => <motion.a href="#contact" className="capability-row" key={number} {...fadeUp(reduce)}><span>{number}</span><h3>{title}</h3><p>{description}</p><ArrowUpRight size={19} /></motion.a>)}</div></section>
+      <section className="capabilities section-pad"><motion.div className="capabilities-intro" {...fadeUp(reduce)}><div className="section-kicker">03 / The work</div><h2>Bring the hard thing.</h2><p>From the first question to the final decision, PeregenAI helps you make meaningful progress.</p></motion.div><div className="capability-list">{siteContent.capabilities.map(([number, title, description]) => <motion.a href="#contact" className="capability-row" key={number} {...fadeUp(reduce)}><span>{number}</span><h3>{title}</h3><p>{description}</p><ArrowUpRight size={19} /></motion.a>)}</div></section>
 
-      <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">04 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle.</p><form className="signup-form" onSubmit={submitEmail}><label className="sr-only" htmlFor="email">Email address</label><input id="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} required /><button className="button button--light" type="submit">{submitted ? 'You’re on the list' : 'Get early access'} <ArrowUpRight size={17} /></button></form></motion.div></section>
+      <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">04 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle.</p><form className="signup-form" onSubmit={submitEmail}><label className="sr-only" htmlFor="email">Email address</label><input id="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} required /><button className="button button--light" type="submit">{submitted ? 'You’re on the list' : 'Get early access'} <ArrowUpRight size={17} /></button></form><div className="contact-details"><a href={`mailto:${siteContent.contact.email}`}>{siteContent.contact.email}</a><address>{siteContent.contact.address}</address></div></motion.div></section>
 
-      <footer className="site-footer"><div className="brand"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>Peregen <span className="brand-name-ai">AI</span></span></div><span>Adaptive intelligence for human work.</span><span>© 2026 Peregen</span></footer>
+      <footer className="site-footer"><div className="brand"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>PeregenAI</span></div><span>Adaptive intelligence for human work.</span><SocialLinks /><span>© 2026 PeregenAI</span></footer>
     </main>
   )
 }

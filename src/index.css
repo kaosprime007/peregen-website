@@ -92,8 +92,15 @@ h1 { max-width: 800px; margin-bottom: 31px; font-size: clamp(4rem, 8vw, 8.3rem);
 .signup-form { display: flex; max-width: 510px; gap: 8px; margin-top: 35px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,.42); }
 .signup-form input { flex: 1; min-width: 0; color: #fff; border: 0; outline: 0; background: transparent; font-size: 15px; }
 .signup-form input::placeholder { color: #c6bffc; }
-.site-footer { display: grid; grid-template-columns: 1fr 1fr auto; align-items: center; gap: 20px; padding: 27px 5vw; color: #77727b; background: #ddd8ce; font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .04em; }
+.contact-details { display: flex; flex-wrap: wrap; gap: 10px 30px; margin-top: 28px; color: #d0c9ff; font: 11px 'DM Mono', monospace; letter-spacing: .02em; }
+.contact-details a { color: inherit; text-decoration: underline; text-underline-offset: 4px; }
+.contact-details address { font-style: normal; }
+.site-footer { display: grid; grid-template-columns: 1fr 1fr auto auto; align-items: center; gap: 20px; padding: 27px 5vw; color: #77727b; background: #ddd8ce; font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .04em; }
 .site-footer .brand { color: #17171b; }
+.social-links { display: flex; align-items: center; gap: 12px; }
+.social-links a { display: inline-grid; width: 28px; height: 28px; place-items: center; color: #17171b; border: 1px solid rgba(23,23,27,.22); border-radius: 50%; transition: color .2s ease, background .2s ease, border-color .2s ease; }
+.social-links a:hover, .social-links a:focus-visible { color: #fff; background: #5540cf; border-color: #5540cf; }
+.social-links svg { width: 14px; height: 14px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .cursor-system { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
 .cursor-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; mix-blend-mode: screen; }
