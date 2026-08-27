@@ -189,7 +189,7 @@ function App() {
       <div className="grain" aria-hidden="true" />
       <OrbitalCursor reduce={reduce} />
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="PeregenAI home"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>PeregenAI</span></a>
+        <a className="brand" href="#top" aria-label="Peregen AI home"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>Peregen <span className="brand-name-ai">AI</span></span></a>
         <nav className={`main-nav ${menuOpen ? 'main-nav--open' : ''}`}>
           <a href="#why" onClick={() => setMenuOpen(false)}>Why PeregenAI</a>
           <a href="#principles" onClick={() => setMenuOpen(false)}>Principles</a>
@@ -225,7 +225,7 @@ function App() {
 
       <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">04 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle.</p><form className="signup-form" onSubmit={submitEmail}><label className="sr-only" htmlFor="email">Email address</label><input id="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} required /><button className="button button--light" type="submit">{submitted ? 'You’re on the list' : 'Get early access'} <ArrowUpRight size={17} /></button></form><div className="contact-details"><a href={`mailto:${siteContent.contact.email}`}>{siteContent.contact.email}</a><address>{siteContent.contact.address}</address></div></motion.div></section>
 
-      <footer className="site-footer"><div className="brand"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>PeregenAI</span></div><span>Adaptive intelligence for human work.</span><SocialLinks /><span>© 2026 PeregenAI</span></footer>
+      <footer className="site-footer"><div className="brand"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>Peregen <span className="brand-name-ai">AI</span></span></div><span>Adaptive intelligence for human work.</span><SocialLinks /><span>© 2026 PeregenAI</span></footer>
     </main>
   )
 }
