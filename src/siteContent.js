@@ -15,9 +15,28 @@ export const siteContent = {
     ['02', 'Creative direction', 'Shape ideas with nuance, momentum, and taste.'],
     ['03', 'Systems thinking', 'See the whole system, then make the next move.'],
   ],
+  portfolio: [
+    {
+      number: '01',
+      name: 'AIPlaymate.io',
+      href: 'https://aiplaymate.io',
+      role: 'Companion product',
+      description: 'A high-fidelity companion platform with memory, voice, and characters that stay with you. Built to feel like a presence, not a session.',
+      accent: 'ink',
+    },
+    {
+      number: '02',
+      name: 'AIPlayWorld.io',
+      href: 'https://aiplayworld.io',
+      role: 'Adventure product',
+      description: 'A living world of interactive stories and AI companions. Choices carry forward, characters remember, and the adventure continues when you return.',
+      accent: 'blue',
+    },
+  ],
   contact: {
     email: 'support@peregenai.com',
     address: '5900 Balcones Drive Suite 100, Austin, TX 78731',
+    signupSubject: 'Peregen AI early access request',
   },
   social: {
     facebook: 'https://www.facebook.com/peregenai',

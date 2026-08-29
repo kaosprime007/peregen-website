@@ -168,11 +168,34 @@ function BrandText({ children }) {
   return String(children).split(/(Peregen ?AI)/g).map((part, index) => part.match(/^Peregen ?AI$/) ? <span key={index}>Peregen <span className="brand-name-ai">AI</span></span> : part)
 }
 
+function PortfolioTrace() {
+  return (
+    <span className="portfolio-trace" aria-hidden="true">
+      <i className="portfolio-trace-edge portfolio-trace-edge--t" />
+      <i className="portfolio-trace-edge portfolio-trace-edge--r" />
+      <i className="portfolio-trace-edge portfolio-trace-edge--b" />
+      <i className="portfolio-trace-edge portfolio-trace-edge--l" />
+    </span>
+  )
+}
+
+function PortfolioOrbit() {
+  return (
+    <div className="portfolio-orbit" aria-hidden="true">
+      <i className="portfolio-orbit-dot portfolio-orbit-dot--main" />
+      <span className="portfolio-orbit-ring portfolio-orbit-ring--a"><i className="portfolio-orbit-dot" /></span>
+      <span className="portfolio-orbit-ring portfolio-orbit-ring--b"><i className="portfolio-orbit-dot" /></span>
+      <span className="portfolio-orbit-ring portfolio-orbit-ring--c"><i className="portfolio-orbit-dot" /></span>
+    </div>
+  )
+}
+
 function App() {
   const reduce = useReducedMotion()
   const [menuOpen, setMenuOpen] = useState(false)
   const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [honey, setHoney] = useState('')
+  const [signupStatus, setSignupStatus] = useState('idle')
   const [soundOn, setSoundOn] = useState(false)
 
   const toggleSound = () => {
@@ -181,11 +204,28 @@ function App() {
     setSoundOn(nextSoundState)
   }
 
-  const submitEmail = (event) => {
+  const submitEmail = async (event) => {
     event.preventDefault()
-    if (!email.trim()) return
-    setSubmitted(true)
-    setEmail('')
+    const address = email.trim()
+    if (!address || honey || signupStatus === 'sending' || signupStatus === 'sent') return
+    setSignupStatus('sending')
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${siteContent.contact.email}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          email: address,
+          _subject: siteContent.contact.signupSubject,
+          source: 'peregenai.com early access',
+        }),
+      })
+      const payload = await response.json().catch(() => ({}))
+      if (!response.ok || payload.success === 'false' || payload.success === false) throw new Error('send failed')
+      setSignupStatus('sent')
+      setEmail('')
+    } catch {
+      setSignupStatus('error')
+    }
   }
 
   return (
@@ -197,6 +237,7 @@ function App() {
         <nav className={`main-nav ${menuOpen ? 'main-nav--open' : ''}`}>
           <a href="#why" onClick={() => setMenuOpen(false)}>Why <BrandText>Peregen AI</BrandText></a>
           <a href="#principles" onClick={() => setMenuOpen(false)}>Principles</a>
+          <a href="#portfolio" onClick={() => setMenuOpen(false)}>Portfolio</a>
           <a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
         </nav>
         <button className={`sound-toggle ${soundOn ? 'sound-toggle--active' : ''}`} type="button" onClick={toggleSound} aria-pressed={soundOn} aria-label={soundOn ? siteContent.interactions.soundOff : siteContent.interactions.soundOn}><span className="sound-dot" />{soundOn ? <Volume2 size={15} /> : <VolumeX size={15} />}<span className="sound-label">{soundOn ? 'Sound on' : 'Sound off'}</span></button>
@@ -211,7 +252,7 @@ function App() {
           <motion.p className="hero-description" {...fadeUp(reduce, 0.16)}><BrandText>{siteContent.hero.description}</BrandText></motion.p>
           <motion.div className="hero-actions" {...fadeUp(reduce, 0.24)}><a className="button button--dark" href="#contact">Explore <BrandText>Peregen AI</BrandText> <ArrowUpRight size={17} /></a><a className="text-link" href="#why">Scroll to discover <ArrowDownRight size={16} /></a></motion.div>
         </div>
-        <motion.div className="hero-visual" {...fadeUp(reduce, 0.18)}><LogoMotion reduce={reduce} /><div className="hero-index">01 <span>/</span> 04</div></motion.div>
+        <motion.div className="hero-visual" {...fadeUp(reduce, 0.18)}><LogoMotion reduce={reduce} /><div className="hero-index">01 <span>/</span> 05</div></motion.div>
         <div className="hero-footer"><span>Built for the space between human instinct and machine scale.</span><span className="scroll-note">Scroll for more ↓</span></div>
       </section>
 
@@ -222,12 +263,42 @@ function App() {
 
       <section className="principles section-pad" id="principles">
         <motion.div className="section-heading" {...fadeUp(reduce)}><div className="section-kicker">02 / The approach</div><h2>Intelligence with a point of view.</h2></motion.div>
-        <div className="principle-list">{siteContent.principles.map((principle, index) => <motion.article className={`principle-card principle-card--${principle.accent}`} key={principle.title} {...fadeUp(reduce, index * 0.08)}><span className="principle-number">{principle.number}</span><div className="principle-orbit" aria-hidden="true"><span /><span /><span /></div><div className="principle-copy"><h3>{principle.title}</h3><p><BrandText>{principle.description}</BrandText></p></div><ArrowUpRight className="principle-arrow" size={22} /></motion.article>)}</div>
+        <div className="principle-list">{siteContent.principles.map((principle, index) => <motion.article className={`principle-card principle-card--${principle.accent}`} key={principle.title} {...fadeUp(reduce, index * 0.08)}><span className="principle-number">{principle.number}</span><PortfolioOrbit /><div className="principle-copy"><h3>{principle.title}</h3><p><BrandText>{principle.description}</BrandText></p></div><ArrowUpRight className="principle-arrow" size={22} /></motion.article>)}</div>
       </section>
 
       <section className="capabilities section-pad"><motion.div className="capabilities-intro" {...fadeUp(reduce)}><div className="section-kicker">03 / The work</div><h2>Bring the hard thing.</h2><p>From the first question to the final decision, <BrandText>Peregen AI</BrandText> helps you make meaningful progress.</p></motion.div><div className="capability-list">{siteContent.capabilities.map(([number, title, description]) => <motion.a href="#contact" className="capability-row" key={number} {...fadeUp(reduce)}><span>{number}</span><h3>{title}</h3><p>{description}</p><ArrowUpRight size={19} /></motion.a>)}</div></section>
 
-      <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">04 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle.</p><form className="signup-form" onSubmit={submitEmail}><label className="sr-only" htmlFor="email">Email address</label><input id="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} required /><button className="button button--light" type="submit">{submitted ? 'You’re on the list' : 'Get early access'} <ArrowUpRight size={17} /></button></form><div className="contact-details"><a href={`mailto:${siteContent.contact.email}`}>{siteContent.contact.email}</a><address>{siteContent.contact.address}</address></div></motion.div></section>
+      <section className="portfolio section-pad" id="portfolio">
+        <motion.div className="section-heading" {...fadeUp(reduce)}>
+          <div className="section-kicker">04 / The portfolio</div>
+          <h2>Out in the world.</h2>
+        </motion.div>
+        <div className="portfolio-list">
+          {siteContent.portfolio.map((project, index) => (
+            <motion.a
+              className={`portfolio-card portfolio-card--${project.accent}`}
+              href={project.href}
+              key={project.name}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Visit ${project.name}`}
+              {...fadeUp(reduce, index * 0.08)}
+            >
+              <PortfolioTrace />
+              <span className="portfolio-number">{project.number}</span>
+              <PortfolioOrbit />
+              <div className="portfolio-copy">
+                <p className="portfolio-role">{project.role}</p>
+                <h3>{project.name}</h3>
+                <p>{project.description}</p>
+              </div>
+              <span className="portfolio-visit">Visit site <ArrowUpRight size={16} /></span>
+            </motion.a>
+          ))}
+        </div>
+      </section>
+
+      <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">05 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle. Requests go to {siteContent.contact.email}.</p><form className="signup-form" onSubmit={submitEmail}><label className="sr-only" htmlFor="email">Email address</label><input id="email" name="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" disabled={signupStatus === 'sending' || signupStatus === 'sent'} required /><label className="sr-only" htmlFor="company">Company</label><input className="signup-honey" id="company" name="_honey" type="text" tabIndex={-1} autoComplete="off" value={honey} onChange={(event) => setHoney(event.target.value)} /><button className="button button--light" type="submit" disabled={signupStatus === 'sending' || signupStatus === 'sent'}>{signupStatus === 'sent' ? 'You’re on the list' : signupStatus === 'sending' ? 'Sending' : 'Get early access'} <ArrowUpRight size={17} /></button></form>{signupStatus === 'error' ? <p className="signup-status" role="alert">Could not send from the form. Email <a href={`mailto:${siteContent.contact.email}?subject=${encodeURIComponent(siteContent.contact.signupSubject)}`}>{siteContent.contact.email}</a> instead.</p> : null}<div className="contact-details"><a href={`mailto:${siteContent.contact.email}`}>{siteContent.contact.email}</a><address>{siteContent.contact.address}</address></div></motion.div></section>
 
       <footer className="site-footer"><div className="brand"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span><BrandText>Peregen AI</BrandText></span></div><span>Adaptive intelligence for human work.</span><SocialLinks /><span>© 2026 <BrandText>Peregen AI</BrandText></span></footer>
     </main>
