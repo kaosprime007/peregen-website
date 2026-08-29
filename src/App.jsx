@@ -198,33 +198,22 @@ function App() {
   const [signupStatus, setSignupStatus] = useState('idle')
   const [soundOn, setSoundOn] = useState(false)
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('joined') !== '1') return
+    setSignupStatus('sent')
+    document.getElementById('contact')?.scrollIntoView()
+  }, [])
+
   const toggleSound = () => {
     const nextSoundState = !soundOn
     document.querySelectorAll('video').forEach((video) => { video.muted = !nextSoundState })
     setSoundOn(nextSoundState)
   }
 
-  const submitEmail = async (event) => {
-    event.preventDefault()
-    const address = email.trim()
-    if (!address || honey || signupStatus === 'sending' || signupStatus === 'sent') return
-    setSignupStatus('sending')
-    try {
-      const response = await fetch(`https://formsubmit.co/ajax/${siteContent.contact.email}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          email: address,
-          _subject: siteContent.contact.signupSubject,
-          source: 'peregenai.com early access',
-        }),
-      })
-      const payload = await response.json().catch(() => ({}))
-      if (!response.ok || payload.success === 'false' || payload.success === false) throw new Error('send failed')
-      setSignupStatus('sent')
-      setEmail('')
-    } catch {
-      setSignupStatus('error')
+  const submitEmail = (event) => {
+    if (honey || signupStatus === 'sent') {
+      event.preventDefault()
     }
   }
 
@@ -298,7 +287,7 @@ function App() {
         </div>
       </section>
 
-      <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">05 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle. Requests go to {siteContent.contact.email}.</p><form className="signup-form" onSubmit={submitEmail}><label className="sr-only" htmlFor="email">Email address</label><input id="email" name="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" disabled={signupStatus === 'sending' || signupStatus === 'sent'} required /><label className="sr-only" htmlFor="company">Company</label><input className="signup-honey" id="company" name="_honey" type="text" tabIndex={-1} autoComplete="off" value={honey} onChange={(event) => setHoney(event.target.value)} /><button className="button button--light" type="submit" disabled={signupStatus === 'sending' || signupStatus === 'sent'}>{signupStatus === 'sent' ? 'You’re on the list' : signupStatus === 'sending' ? 'Sending' : 'Get early access'} <ArrowUpRight size={17} /></button></form>{signupStatus === 'error' ? <p className="signup-status" role="alert">Could not send from the form. Email <a href={`mailto:${siteContent.contact.email}?subject=${encodeURIComponent(siteContent.contact.signupSubject)}`}>{siteContent.contact.email}</a> instead.</p> : null}<div className="contact-details"><a href={`mailto:${siteContent.contact.email}`}>{siteContent.contact.email}</a><address>{siteContent.contact.address}</address></div></motion.div></section>
+      <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">05 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle.</p><form className="signup-form" action={`https://formsubmit.co/${siteContent.contact.email}`} method="POST" acceptCharset="UTF-8" onSubmit={submitEmail}><input type="hidden" name="_subject" value={siteContent.contact.signupSubject} /><input type="hidden" name="_template" value="table" /><input type="hidden" name="_captcha" value="false" /><input type="hidden" name="_next" value="https://peregenai.com/?joined=1#contact" /><input type="hidden" name="source" value="peregenai.com" /><label className="sr-only" htmlFor="email">Email address</label><input id="email" name="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" disabled={signupStatus === 'sent'} required /><label className="sr-only" htmlFor="company">Company</label><input className="signup-honey" id="company" name="_honey" type="text" tabIndex={-1} autoComplete="off" value={honey} onChange={(event) => setHoney(event.target.value)} /><button className="button button--light" type="submit" disabled={signupStatus === 'sent'}>{signupStatus === 'sent' ? 'You’re on the list' : 'Get early access'} <ArrowUpRight size={17} /></button></form>{signupStatus === 'sent' ? <p className="signup-status" role="status">You’re on the list. We’ll reach you at the address you sent.</p> : null}<div className="contact-details"><a href={`mailto:${siteContent.contact.email}`}>{siteContent.contact.email}</a><address>{siteContent.contact.address}</address></div></motion.div></section>
 
       <footer className="site-footer"><div className="brand"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span><BrandText>Peregen AI</BrandText></span></div><span>Adaptive intelligence for human work.</span><SocialLinks /><span>© 2026 <BrandText>Peregen AI</BrandText></span></footer>
     </main>
