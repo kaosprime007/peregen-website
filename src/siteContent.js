@@ -4,7 +4,7 @@ export const siteContent = {
     title: 'AI that meets you halfway.',
     description: 'Peregen AI helps you think further, make better decisions, and build what matters—with intelligence that adapts to the way you work.',
   },
-  manifesto: 'To architect resilient, emotionally intelligent AI ecosystems that evolve with every interaction—bridging the gap between cold logic and human connection to drive performance, security, and genuine impact.',
+  manifesto: 'It is here to make that point of view more capable—learning your context, showing its reasoning, and improving with every exchange.',
   principles: [
     { number: '01', title: 'Understand', description: 'Context before commands. Peregen AI reads the signal beneath the request and learns what good work looks like for you.', accent: 'violet' },
     { number: '02', title: 'Adapt', description: 'Every exchange makes the next one sharper. The system evolves with your pace, preferences, and purpose.', accent: 'blue' },

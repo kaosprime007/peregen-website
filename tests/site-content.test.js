@@ -5,7 +5,7 @@ import { siteContent } from '../src/siteContent.js'
 test('Peregen AI landing page keeps its core positioning and story sections', () => {
   assert.equal(siteContent.hero.eyebrow, 'Adaptive Intelligence. Human-Centric Precision.')
   assert.match(siteContent.hero.title, /meets you halfway/i)
-  assert.equal(siteContent.manifesto, 'To architect resilient, emotionally intelligent AI ecosystems that evolve with every interaction—bridging the gap between cold logic and human connection to drive performance, security, and genuine impact.')
+  assert.equal(siteContent.manifesto, 'It is here to make that point of view more capable—learning your context, showing its reasoning, and improving with every exchange.')
   assert.deepEqual(siteContent.principles.map((principle) => principle.title), ['Understand', 'Adapt', 'Collaborate'])
   assert.deepEqual(siteContent.portfolio.map((project) => [project.name, project.href]), [
     ['AIPlaymate.io', 'https://aiplaymate.io'],
