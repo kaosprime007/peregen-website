@@ -15,34 +15,22 @@ const fadeUp = (reduce, delay = 0) => ({
 function LogoMotion({ reduce }) {
   return (
     <div className="logo-stage" aria-label="Animated Peregen AI orbital logo">
-      <div className="logo-stage-top">
-        <div className="logo-halo logo-halo--one" />
-        <div className="logo-halo logo-halo--two" />
-        <motion.video
-          className="logo-video"
-          src={siteContent.hero.logoVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster={logo}
-          aria-label="Peregen AI orbital logo animation"
-          animate={reduce ? undefined : { y: [0, -8, 0], rotate: [-1, 1, -1] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <span className="logo-caption">A system for becoming more capable.</span>
-      </div>
-      <video
-        className="logo-bg-video"
-        src={siteContent.hero.backgroundVideo}
+      <div className="logo-halo logo-halo--one" />
+      <div className="logo-halo logo-halo--two" />
+      <motion.video
+        className="logo-video"
+        src={siteContent.hero.logoVideo}
         autoPlay
         muted
         loop
         playsInline
         preload="auto"
-        aria-label="Peregen AI hero background video"
+        poster={logo}
+        aria-label="Peregen AI orbital logo animation"
+        animate={reduce ? undefined : { y: [0, -8, 0], rotate: [-1, 1, -1] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
       />
+      <span className="logo-caption">A system for becoming more capable.</span>
     </div>
   )
 }
@@ -255,6 +243,18 @@ function App() {
         </div>
         <motion.div className="hero-visual" {...fadeUp(reduce, 0.18)}><LogoMotion reduce={reduce} /><div className="hero-index">01 <span>/</span> 05</div></motion.div>
         <div className="hero-footer"><span>Built for the space between human instinct and machine scale.</span><span className="scroll-note">Scroll for more ↓</span></div>
+      </section>
+
+      <section className="hero-bridge" aria-label="Peregen AI atmospheric background">
+        <video
+          className="hero-bridge-video"
+          src={siteContent.hero.backgroundVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+        />
       </section>
 
       <section className="manifesto section-pad" id="why">
