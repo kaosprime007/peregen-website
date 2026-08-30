@@ -245,18 +245,6 @@ function App() {
         <div className="hero-footer"><span>Built for the space between human instinct and machine scale.</span><span className="scroll-note">Scroll for more ↓</span></div>
       </section>
 
-      <section className="hero-bridge" aria-label="Peregen AI atmospheric background">
-        <video
-          className="hero-bridge-video"
-          src={siteContent.hero.backgroundVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-        />
-      </section>
-
       <section className="manifesto section-pad" id="why">
         <motion.div className="section-kicker" {...fadeUp(reduce)}>01 / The premise</motion.div>
         <div className="manifesto-grid"><motion.p className="manifesto-label" {...fadeUp(reduce, 0.08)}><BrandText>Peregen AI is not here to replace the human point of view.</BrandText></motion.p><motion.h2 {...fadeUp(reduce, 0.14)}>{siteContent.manifesto}</motion.h2></div>
@@ -267,7 +255,33 @@ function App() {
         <div className="principle-list">{siteContent.principles.map((principle, index) => <motion.article className={`principle-card principle-card--${principle.accent}`} key={principle.title} {...fadeUp(reduce, index * 0.08)}><span className="principle-number">{principle.number}</span><PortfolioOrbit /><div className="principle-copy"><h3>{principle.title}</h3><p><BrandText>{principle.description}</BrandText></p></div><ArrowUpRight className="principle-arrow" size={22} /></motion.article>)}</div>
       </section>
 
-      <section className="capabilities section-pad"><motion.div className="capabilities-intro" {...fadeUp(reduce)}><div className="section-kicker">03 / The work</div><h2>Bring the hard thing.</h2><p>From the first question to the final decision, <BrandText>Peregen AI</BrandText> helps you make meaningful progress.</p></motion.div><div className="capability-list">{siteContent.capabilities.map(([number, title, description]) => <motion.a href="#contact" className="capability-row" key={number} {...fadeUp(reduce)}><span>{number}</span><h3>{title}</h3><p>{description}</p><ArrowUpRight size={19} /></motion.a>)}</div></section>
+      <section className="capabilities section-pad" id="work">
+        <video
+          className="capabilities-video"
+          src={siteContent.hero.backgroundVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+        />
+        <motion.div className="capabilities-intro" {...fadeUp(reduce)}>
+          <div className="section-kicker">03 / The work</div>
+          <h2>Bring the hard thing.</h2>
+          <p>From the first question to the final decision, <BrandText>Peregen AI</BrandText> helps you make meaningful progress.</p>
+        </motion.div>
+        <div className="capability-list">
+          {siteContent.capabilities.map(([number, title, description]) => (
+            <motion.a href="#contact" className="capability-row" key={number} {...fadeUp(reduce)}>
+              <span>{number}</span>
+              <h3>{title}</h3>
+              <p>{description}</p>
+              <ArrowUpRight size={19} />
+            </motion.a>
+          ))}
+        </div>
+      </section>
 
       <section className="portfolio section-pad" id="portfolio">
         <motion.div className="section-heading" {...fadeUp(reduce)}>
