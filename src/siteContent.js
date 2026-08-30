@@ -3,6 +3,8 @@ export const siteContent = {
     eyebrow: 'Adaptive Intelligence. Human-Centric Precision.',
     title: 'AI that meets you halfway.',
     description: 'Peregen AI helps you think further, make better decisions, and build what matters—with intelligence that adapts to the way you work.',
+    backgroundVideo: '/hero-background.mp4',
+    logoVideo: '/animate_logo.mp4',
   },
   manifesto: 'It is here to make that point of view more capable—learning your context, showing its reasoning, and improving with every exchange.',
   principles: [

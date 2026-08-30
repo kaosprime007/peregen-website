@@ -15,11 +15,21 @@ const fadeUp = (reduce, delay = 0) => ({
 function LogoMotion({ reduce }) {
   return (
     <div className="logo-stage" aria-label="Animated Peregen AI orbital logo">
+      <video
+        className="logo-bg-video"
+        src={siteContent.hero.backgroundVideo}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+      />
       <div className="logo-halo logo-halo--one" />
       <div className="logo-halo logo-halo--two" />
       <motion.video
         className="logo-video"
-        src="/animate_logo.mp4"
+        src={siteContent.hero.logoVideo}
         autoPlay
         muted
         loop
