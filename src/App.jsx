@@ -15,6 +15,24 @@ const fadeUp = (reduce, delay = 0) => ({
 function LogoMotion({ reduce }) {
   return (
     <div className="logo-stage" aria-label="Animated Peregen AI orbital logo">
+      <div className="logo-stage-top">
+        <div className="logo-halo logo-halo--one" />
+        <div className="logo-halo logo-halo--two" />
+        <motion.video
+          className="logo-video"
+          src={siteContent.hero.logoVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster={logo}
+          aria-label="Peregen AI orbital logo animation"
+          animate={reduce ? undefined : { y: [0, -8, 0], rotate: [-1, 1, -1] }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <span className="logo-caption">A system for becoming more capable.</span>
+      </div>
       <video
         className="logo-bg-video"
         src={siteContent.hero.backgroundVideo}
@@ -23,24 +41,8 @@ function LogoMotion({ reduce }) {
         loop
         playsInline
         preload="auto"
-        aria-hidden="true"
+        aria-label="Peregen AI hero background video"
       />
-      <div className="logo-halo logo-halo--one" />
-      <div className="logo-halo logo-halo--two" />
-      <motion.video
-        className="logo-video"
-        src={siteContent.hero.logoVideo}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        poster={logo}
-        aria-label="Peregen AI orbital logo animation"
-        animate={reduce ? undefined : { y: [0, -8, 0], rotate: [-1, 1, -1] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <span className="logo-caption">A system for becoming more capable.</span>
     </div>
   )
 }
