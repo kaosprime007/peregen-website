@@ -10,6 +10,7 @@ export const siteContent = {
     logoPoster: '/peregen-orbital-logo.webp',
   },
   manifesto: 'It is here to make that point of view more capable—learning your context, showing its reasoning, and improving with every exchange.',
+  principlesBackgroundVideo: '/principles-background.mp4',
   principles: [
     { number: '01', title: 'Understand', description: 'Context before commands. Peregen AI reads the signal beneath the request and learns what good work looks like for you.', accent: 'violet' },
     { number: '02', title: 'Adapt', description: 'Every exchange makes the next one sharper. The system evolves with your pace, preferences, and purpose.', accent: 'blue' },

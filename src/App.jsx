@@ -124,6 +124,37 @@ function CapabilitiesMedia({ compact }) {
   )
 }
 
+function PrinciplesMedia() {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return undefined
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {})
+        else video.pause()
+      },
+      { rootMargin: '80px 0px', threshold: 0.15 },
+    )
+    observer.observe(video)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <video
+      ref={videoRef}
+      className="principles-video"
+      src={siteContent.principlesBackgroundVideo}
+      muted
+      loop
+      playsInline
+      preload="none"
+      aria-hidden="true"
+    />
+  )
+}
+
 function OrbitalCursor({ reduce }) {
   const [cursor, setCursor] = useState({ x: -100, y: -100 })
   const canvasRef = useRef(null)
@@ -347,6 +378,7 @@ function App() {
       </section>
 
       <section className="principles section-pad" id="principles">
+        <PrinciplesMedia />
         <motion.div className="section-heading" {...fadeUp(reduce)}><div className="section-kicker">02 / The approach</div><h2>Intelligence with a point of view.</h2></motion.div>
         <div className="principle-list">{siteContent.principles.map((principle, index) => <motion.article className={`principle-card principle-card--${principle.accent}`} key={principle.title} {...fadeUp(reduce, index * 0.08)}><span className="principle-number">{principle.number}</span><PortfolioOrbit /><div className="principle-copy"><h3>{principle.title}</h3><p><BrandText>{principle.description}</BrandText></p></div><ArrowUpRight className="principle-arrow" size={22} /></motion.article>)}</div>
       </section>
