@@ -58,7 +58,10 @@ h1 { max-width: 800px; margin-bottom: 31px; font-size: clamp(4rem, 8vw, 8.3rem);
 .manifesto-grid { display: grid; grid-template-columns: 1fr 2.1fr; gap: 8vw; }
 .manifesto-label { max-width: 180px; font-size: 14px; line-height: 1.5; }
 .manifesto h2 { max-width: 920px; margin: 0; font-size: clamp(2.4rem, 4.8vw, 5.8rem); line-height: .98; letter-spacing: -.075em; font-weight: 500; }
-.principles { background: #f1eee8; }
+.principles { position: relative; background: #f1eee8; isolation: isolate; overflow: hidden; }
+.principles-video { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; opacity: .8; pointer-events: none; }
+.principles::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgba(241,238,232,.15) 0%, rgba(241,238,232,.55) 100%); }
+.principles > *:not(.principles-video) { position: relative; z-index: 2; }
 .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 62px; }
 .section-heading .section-kicker { margin: 0; }
 .section-heading h2, .capabilities h2 { max-width: 620px; margin: 0; font-size: clamp(3rem, 6vw, 7rem); line-height: .9; letter-spacing: -.08em; font-weight: 600; }
@@ -181,4 +184,5 @@ h1 { max-width: 800px; margin-bottom: 31px; font-size: clamp(4rem, 8vw, 8.3rem);
   .logo-video { mix-blend-mode: normal; filter: none; }
   .logo-halo { animation: none; opacity: .28; }
   .capabilities-video { opacity: .3; }
+  .principles-video { opacity: .6; }
 }
