@@ -4,7 +4,10 @@ export const siteContent = {
     title: 'AI that meets you halfway.',
     description: 'Peregen AI helps you think further, make better decisions, and build what matters—with intelligence that adapts to the way you work.',
     backgroundVideo: '/hero-background.mp4',
+    backgroundVideoMobile: '/hero-background-mobile.mp4',
     logoVideo: '/animate_logo.mp4',
+    logoVideoMobile: '/animate_logo-mobile.mp4',
+    logoPoster: '/peregen-orbital-logo.webp',
   },
   manifesto: 'It is here to make that point of view more capable—learning your context, showing its reasoning, and improving with every exchange.',
   principles: [

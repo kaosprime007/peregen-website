@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, Menu, Volume2, VolumeX, X } from 'lucide-react'
 import { siteContent } from './siteContent'
 
-const logo = '/peregen-orbital-logo.png'
+const logo = siteContent.hero.logoPoster
 
 const fadeUp = (reduce, delay = 0) => ({
   initial: reduce ? false : { opacity: 0, y: 28 },
@@ -12,14 +12,72 @@ const fadeUp = (reduce, delay = 0) => ({
   transition: { duration: reduce ? 0 : 0.7, delay },
 })
 
-function LogoMotion({ reduce }) {
+function useCompactMedia() {
+  // Default true so phones never briefly pull the full desktop encodes.
+  const [compact, setCompact] = useState(true)
+
+  useEffect(() => {
+    const narrow = window.matchMedia('(max-width: 800px)')
+    const coarse = window.matchMedia('(pointer: coarse)')
+    const sync = () => setCompact(narrow.matches || coarse.matches)
+    sync()
+    narrow.addEventListener?.('change', sync)
+    coarse.addEventListener?.('change', sync)
+    return () => {
+      narrow.removeEventListener?.('change', sync)
+      coarse.removeEventListener?.('change', sync)
+    }
+  }, [])
+
+  return compact
+}
+
+function useForceLogoPlayback(deps = []) {
+  useEffect(() => {
+    const playAll = () => {
+      document.querySelectorAll('video.logo-video, video.brand-video').forEach((video) => {
+        video.muted = true
+        video.playsInline = true
+        const start = () => video.play().catch(() => {})
+        if (video.readyState >= 2) start()
+        else video.addEventListener('loadeddata', start, { once: true })
+      })
+    }
+    playAll()
+    const onReveal = () => playAll()
+    document.addEventListener('touchstart', onReveal, { once: true, passive: true })
+    document.addEventListener('click', onReveal, { once: true })
+    return () => {
+      document.removeEventListener('touchstart', onReveal)
+      document.removeEventListener('click', onReveal)
+    }
+  }, deps)
+}
+
+function BrandMark({ compact }) {
+  return (
+    <video
+      className="brand-video"
+      src={compact ? siteContent.hero.logoVideoMobile : siteContent.hero.logoVideo}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      poster={logo}
+      aria-hidden="true"
+    />
+  )
+}
+
+function LogoMotion({ reduce, compact }) {
   return (
     <div className="logo-stage" aria-label="Animated Peregen AI orbital logo">
       <div className="logo-halo logo-halo--one" />
       <div className="logo-halo logo-halo--two" />
       <motion.video
         className="logo-video"
-        src={siteContent.hero.logoVideo}
+        src={compact ? siteContent.hero.logoVideoMobile : siteContent.hero.logoVideo}
         autoPlay
         muted
         loop
@@ -32,6 +90,37 @@ function LogoMotion({ reduce }) {
       />
       <span className="logo-caption">A system for becoming more capable.</span>
     </div>
+  )
+}
+
+function CapabilitiesMedia({ compact }) {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return undefined
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {})
+        else video.pause()
+      },
+      { rootMargin: '80px 0px', threshold: 0.15 },
+    )
+    observer.observe(video)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <video
+      ref={videoRef}
+      className="capabilities-video"
+      src={compact ? siteContent.hero.backgroundVideoMobile : siteContent.hero.backgroundVideo}
+      muted
+      loop
+      playsInline
+      preload="none"
+      aria-hidden="true"
+    />
   )
 }
 
@@ -192,6 +281,7 @@ function PortfolioOrbit() {
 
 function App() {
   const reduce = useReducedMotion()
+  const compact = useCompactMedia()
   const [menuOpen, setMenuOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [honey, setHoney] = useState('')
@@ -204,6 +294,12 @@ function App() {
     setSignupStatus('sent')
     document.getElementById('contact')?.scrollIntoView()
   }, [])
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('compact-media', compact)
+  }, [compact])
+
+  useForceLogoPlayback([compact])
 
   const toggleSound = () => {
     const nextSoundState = !soundOn
@@ -218,11 +314,11 @@ function App() {
   }
 
   return (
-    <main className="site-shell">
+    <main className={`site-shell${compact ? ' site-shell--compact' : ''}`}>
       <div className="grain" aria-hidden="true" />
       <OrbitalCursor reduce={reduce} />
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Peregen AI home"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span>Peregen <span className="brand-name-ai">AI</span></span></a>
+        <a className="brand" href="#top" aria-label="Peregen AI home"><BrandMark compact={compact} /><span>Peregen <span className="brand-name-ai">AI</span></span></a>
         <nav className={`main-nav ${menuOpen ? 'main-nav--open' : ''}`}>
           <a href="#why" onClick={() => setMenuOpen(false)}>Why <BrandText>Peregen AI</BrandText></a>
           <a href="#principles" onClick={() => setMenuOpen(false)}>Principles</a>
@@ -241,7 +337,7 @@ function App() {
           <motion.p className="hero-description" {...fadeUp(reduce, 0.16)}><BrandText>{siteContent.hero.description}</BrandText></motion.p>
           <motion.div className="hero-actions" {...fadeUp(reduce, 0.24)}><a className="button button--dark" href="#contact">Explore <BrandText>Peregen AI</BrandText> <ArrowUpRight size={17} /></a><a className="text-link" href="#why">Scroll to discover <ArrowDownRight size={16} /></a></motion.div>
         </div>
-        <motion.div className="hero-visual" {...fadeUp(reduce, 0.18)}><LogoMotion reduce={reduce} /><div className="hero-index">01 <span>/</span> 05</div></motion.div>
+        <motion.div className="hero-visual" {...fadeUp(reduce, 0.18)}><LogoMotion reduce={reduce} compact={compact} /><div className="hero-index">01 <span>/</span> 05</div></motion.div>
         <div className="hero-footer"><span>Built for the space between human instinct and machine scale.</span><span className="scroll-note">Scroll for more ↓</span></div>
       </section>
 
@@ -256,16 +352,7 @@ function App() {
       </section>
 
       <section className="capabilities section-pad" id="work">
-        <video
-          className="capabilities-video"
-          src={siteContent.hero.backgroundVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          aria-hidden="true"
-        />
+        <CapabilitiesMedia compact={compact} />
         <motion.div className="capabilities-intro" {...fadeUp(reduce)}>
           <div className="section-kicker">03 / The work</div>
           <h2>Bring the hard thing.</h2>
@@ -315,7 +402,7 @@ function App() {
 
       <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">05 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle.</p><form className="signup-form" action={`https://formsubmit.co/${siteContent.contact.email}`} method="POST" acceptCharset="UTF-8" onSubmit={submitEmail}><input type="hidden" name="_subject" value={siteContent.contact.signupSubject} /><input type="hidden" name="_template" value="table" /><input type="hidden" name="_captcha" value="false" /><input type="hidden" name="_next" value="https://peregenai.com/?joined=1#contact" /><input type="hidden" name="source" value="peregenai.com" /><label className="sr-only" htmlFor="email">Email address</label><input id="email" name="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" disabled={signupStatus === 'sent'} required /><label className="sr-only" htmlFor="company">Company</label><input className="signup-honey" id="company" name="_honey" type="text" tabIndex={-1} autoComplete="off" value={honey} onChange={(event) => setHoney(event.target.value)} /><button className="button button--light" type="submit" disabled={signupStatus === 'sent'}>{signupStatus === 'sent' ? 'You’re on the list' : 'Get early access'} <ArrowUpRight size={17} /></button></form>{signupStatus === 'sent' ? <p className="signup-status" role="status">You’re on the list. We’ll reach you at the address you sent.</p> : null}<div className="contact-details"><a href={`mailto:${siteContent.contact.email}`}>{siteContent.contact.email}</a><address>{siteContent.contact.address}</address></div></motion.div></section>
 
-      <footer className="site-footer"><div className="brand"><video className="brand-video" src="/animate_logo.mp4" autoPlay muted loop playsInline aria-hidden="true" /><span><BrandText>Peregen AI</BrandText></span></div><span>Adaptive intelligence for human work.</span><SocialLinks /><span>© 2026 <BrandText>Peregen AI</BrandText></span></footer>
+      <footer className="site-footer"><div className="brand"><BrandMark compact={compact} /><span><BrandText>Peregen AI</BrandText></span></div><span>Adaptive intelligence for human work.</span><SocialLinks /><span>© 2026 <BrandText>Peregen AI</BrandText></span></footer>
     </main>
   )
 }
