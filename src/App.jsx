@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, Menu, Volume2, VolumeX, X } from 'lucide-react'
 import { siteContent } from './siteContent'
+import { createSectionAudio } from './sectionAudio'
 
 const logo = siteContent.hero.logoPoster
 
@@ -122,6 +123,27 @@ function CapabilitiesMedia({ compact }) {
       aria-hidden="true"
     />
   )
+}
+
+function PremiseMedia({ reduce }) {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return undefined
+    if (reduce) {
+      video.pause()
+      return undefined
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) video.play().catch(() => {})
+      else video.pause()
+    }, { threshold: 0.15 })
+    observer.observe(video)
+    return () => { observer.disconnect(); video.pause() }
+  }, [reduce])
+
+  return <video ref={videoRef} className="manifesto-video" src={reduce ? undefined : '/premise-background.mp4'} poster="/premise-background.jpg" muted loop playsInline preload="none" aria-hidden="true" />
 }
 
 function PrinciplesMedia() {
@@ -318,6 +340,20 @@ function App() {
   const [honey, setHoney] = useState('')
   const [signupStatus, setSignupStatus] = useState('idle')
   const [soundOn, setSoundOn] = useState(false)
+  const sectionAudio = useRef(null)
+
+  useEffect(() => {
+    const audio = new Audio()
+    audio.loop = true
+    audio.preload = 'none'
+    audio.dataset.sectionAudio = ''
+    document.body.append(audio)
+    sectionAudio.current = createSectionAudio(audio, [...document.querySelectorAll('main > section')])
+    return () => {
+      sectionAudio.current.dispose()
+      audio.remove()
+    }
+  }, [])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -334,7 +370,7 @@ function App() {
 
   const toggleSound = () => {
     const nextSoundState = !soundOn
-    document.querySelectorAll('video').forEach((video) => { video.muted = !nextSoundState })
+    sectionAudio.current?.setEnabled(nextSoundState)
     setSoundOn(nextSoundState)
   }
 
@@ -373,6 +409,7 @@ function App() {
       </section>
 
       <section className="manifesto section-pad" id="why">
+        <PremiseMedia reduce={reduce} />
         <motion.div className="section-kicker" {...fadeUp(reduce)}>01 / The premise</motion.div>
         <div className="manifesto-grid"><motion.p className="manifesto-label" {...fadeUp(reduce, 0.08)}><BrandText>Peregen AI is not here to replace the human point of view.</BrandText></motion.p><motion.h2 {...fadeUp(reduce, 0.14)}>{siteContent.manifesto}</motion.h2></div>
       </section>
