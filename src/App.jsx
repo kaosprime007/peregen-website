@@ -125,25 +125,33 @@ function CapabilitiesMedia({ compact }) {
   )
 }
 
-function PremiseMedia({ reduce }) {
+function PremiseMedia() {
   const videoRef = useRef(null)
 
   useEffect(() => {
     const video = videoRef.current
     if (!video) return undefined
-    if (reduce) {
-      video.pause()
-      return undefined
+    let visible = false
+    const sync = () => {
+      if (visible && !document.hidden) video.play().catch(() => {})
+      else video.pause()
     }
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) video.play().catch(() => {})
-      else video.pause()
+      visible = entry.isIntersecting
+      sync()
     }, { threshold: 0.15 })
     observer.observe(video)
-    return () => { observer.disconnect(); video.pause() }
-  }, [reduce])
+    document.addEventListener('visibilitychange', sync)
+    document.addEventListener('pointerdown', sync, { passive: true })
+    return () => {
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', sync)
+      document.removeEventListener('pointerdown', sync)
+      video.pause()
+    }
+  }, [])
 
-  return <video ref={videoRef} className="manifesto-video" src={reduce ? undefined : '/premise-background.mp4'} poster="/premise-background.jpg" muted loop playsInline preload="none" aria-hidden="true" />
+  return <video ref={videoRef} className="manifesto-video" src="/premise-background-clean.mp4" poster="/premise-background-clean.jpg" muted loop playsInline preload="metadata" aria-hidden="true" />
 }
 
 function PrinciplesMedia() {
@@ -409,7 +417,7 @@ function App() {
       </section>
 
       <section className="manifesto section-pad" id="why">
-        <PremiseMedia reduce={reduce} />
+        <PremiseMedia />
         <motion.div className="section-kicker" {...fadeUp(reduce)}>01 / The premise</motion.div>
         <div className="manifesto-grid"><motion.p className="manifesto-label" {...fadeUp(reduce, 0.08)}><BrandText>Peregen AI is not here to replace the human point of view.</BrandText></motion.p><motion.h2 {...fadeUp(reduce, 0.14)}>{siteContent.manifesto}</motion.h2></div>
       </section>
