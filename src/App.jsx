@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, Menu, Volume2, VolumeX, X } from 'lucide-react'
 import { siteContent } from './siteContent'
+import { createSectionAudio } from './sectionAudio'
 
 const logo = siteContent.hero.logoPoster
 
@@ -339,6 +340,20 @@ function App() {
   const [honey, setHoney] = useState('')
   const [signupStatus, setSignupStatus] = useState('idle')
   const [soundOn, setSoundOn] = useState(false)
+  const sectionAudio = useRef(null)
+
+  useEffect(() => {
+    const audio = new Audio()
+    audio.loop = true
+    audio.preload = 'none'
+    audio.dataset.sectionAudio = ''
+    document.body.append(audio)
+    sectionAudio.current = createSectionAudio(audio, [...document.querySelectorAll('main > section')])
+    return () => {
+      sectionAudio.current.dispose()
+      audio.remove()
+    }
+  }, [])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -355,7 +370,7 @@ function App() {
 
   const toggleSound = () => {
     const nextSoundState = !soundOn
-    document.querySelectorAll('video').forEach((video) => { video.muted = !nextSoundState })
+    sectionAudio.current?.setEnabled(nextSoundState)
     setSoundOn(nextSoundState)
   }
 
