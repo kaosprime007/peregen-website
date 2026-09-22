@@ -36,7 +36,7 @@ function useCompactMedia() {
 function useForceLogoPlayback(deps = []) {
   useEffect(() => {
     const playAll = () => {
-      document.querySelectorAll('video.logo-video, video.brand-video').forEach((video) => {
+      document.querySelectorAll('video.logo-video').forEach((video) => {
         video.muted = true
         video.playsInline = true
         const start = () => video.play().catch(() => {})
@@ -55,17 +55,16 @@ function useForceLogoPlayback(deps = []) {
   }, deps)
 }
 
-function BrandMark({ compact }) {
+function BrandMark() {
   return (
-    <video
+    <img
       className="brand-video"
-      src={compact ? siteContent.hero.logoVideoMobile : siteContent.hero.logoVideo}
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="auto"
-      poster={logo}
+      src={logo}
+      alt=""
+      width="27"
+      height="27"
+      loading="eager"
+      decoding="async"
       aria-hidden="true"
     />
   )
@@ -196,11 +195,30 @@ function OrbitalCursor({ reduce }) {
     const context = canvas.getContext('2d')
     const particles = []
     const cometImage = new Image()
-    cometImage.src = siteContent.interactions.cometAsset
     const cometBuffer = document.createElement('canvas')
     cometBuffer.width = 220
     cometBuffer.height = 220
-    const cometBufferContext = cometBuffer.getContext('2d', { willReadFrequently: true })
+    const cometBufferContext = cometBuffer.getContext('2d')
+    let cometReady = false
+
+    const prepareComet = () => {
+      if (cometReady || !cometImage.complete || !cometImage.naturalWidth) return
+      cometBufferContext.clearRect(0, 0, cometBuffer.width, cometBuffer.height)
+      cometBufferContext.drawImage(cometImage, 0, 0, cometBuffer.width, cometBuffer.height)
+      const cometPixels = cometBufferContext.getImageData(0, 0, cometBuffer.width, cometBuffer.height)
+      for (let pixel = 0; pixel < cometPixels.data.length; pixel += 4) {
+        const brightness = Math.max(cometPixels.data[pixel], cometPixels.data[pixel + 1], cometPixels.data[pixel + 2])
+        cometPixels.data[pixel + 3] = brightness < 18 ? 0 : Math.min(255, Math.round((brightness - 18) * 1.8))
+      }
+      cometBufferContext.putImageData(cometPixels, 0, 0)
+      cometReady = true
+    }
+
+    cometImage.onload = prepareComet
+    cometImage.src = siteContent.interactions.cometAsset
+    if (cometImage.complete) {
+      prepareComet()
+    }
     let cometDirection = 0
     let pointerPosition = { x: -100, y: -100 }
     let lastPointer = null
@@ -241,16 +259,11 @@ function OrbitalCursor({ reduce }) {
 
     const draw = () => {
       context.clearRect(0, 0, window.innerWidth, window.innerHeight)
-      if (cometImage.complete) {
+      if (!cometReady && cometImage.complete) {
+        prepareComet()
+      }
+      if (cometReady && pointerPosition.x >= 0 && pointerPosition.y >= 0) {
         const cometSize = reduce ? 105 : 185
-        cometBufferContext.clearRect(0, 0, cometBuffer.width, cometBuffer.height)
-        cometBufferContext.drawImage(cometImage, 0, 0, cometBuffer.width, cometBuffer.height)
-        const cometPixels = cometBufferContext.getImageData(0, 0, cometBuffer.width, cometBuffer.height)
-        for (let pixel = 0; pixel < cometPixels.data.length; pixel += 4) {
-          const brightness = Math.max(cometPixels.data[pixel], cometPixels.data[pixel + 1], cometPixels.data[pixel + 2])
-          cometPixels.data[pixel + 3] = brightness < 18 ? 0 : Math.min(255, Math.round((brightness - 18) * 1.8))
-        }
-        cometBufferContext.putImageData(cometPixels, 0, 0)
         context.save()
         context.globalCompositeOperation = 'screen'
         context.globalAlpha = reduce ? 0.55 : 0.82
@@ -393,7 +406,7 @@ function App() {
       <div className="grain" aria-hidden="true" />
       <OrbitalCursor reduce={reduce} />
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Peregen AI home"><BrandMark compact={compact} /><span>Peregen <span className="brand-name-ai">AI</span></span></a>
+        <a className="brand" href="#top" aria-label="Peregen AI home"><BrandMark /><span>Peregen <span className="brand-name-ai">AI</span></span></a>
         <nav className={`main-nav ${menuOpen ? 'main-nav--open' : ''}`}>
           <a href="#why" onClick={() => setMenuOpen(false)}>Why <BrandText>Peregen AI</BrandText></a>
           <a href="#principles" onClick={() => setMenuOpen(false)}>Principles</a>
@@ -479,7 +492,7 @@ function App() {
 
       <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">05 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle.</p><form className="signup-form" action={`https://formsubmit.co/${siteContent.contact.email}`} method="POST" acceptCharset="UTF-8" onSubmit={submitEmail}><input type="hidden" name="_subject" value={siteContent.contact.signupSubject} /><input type="hidden" name="_template" value="table" /><input type="hidden" name="_captcha" value="false" /><input type="hidden" name="_next" value="https://peregenai.com/?joined=1#contact" /><input type="hidden" name="source" value="peregenai.com" /><label className="sr-only" htmlFor="email">Email address</label><input id="email" name="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" disabled={signupStatus === 'sent'} required /><label className="sr-only" htmlFor="company">Company</label><input className="signup-honey" id="company" name="_honey" type="text" tabIndex={-1} autoComplete="off" value={honey} onChange={(event) => setHoney(event.target.value)} /><button className="button button--light" type="submit" disabled={signupStatus === 'sent'}>{signupStatus === 'sent' ? 'You’re on the list' : 'Get early access'} <ArrowUpRight size={17} /></button></form>{signupStatus === 'sent' ? <p className="signup-status" role="status">You’re on the list. We’ll reach you at the address you sent.</p> : null}<div className="contact-details"><a href={`mailto:${siteContent.contact.email}`}>{siteContent.contact.email}</a><address>{siteContent.contact.address}</address></div></motion.div></section>
 
-      <footer className="site-footer"><div className="brand"><BrandMark compact={compact} /><span><BrandText>Peregen AI</BrandText></span></div><span>Adaptive intelligence for human work.</span><SocialLinks /><span>© 2026 <BrandText>Peregen AI</BrandText></span></footer>
+      <footer className="site-footer"><div className="brand"><BrandMark /><span><BrandText>Peregen AI</BrandText></span></div><span>Adaptive intelligence for human work.</span><SocialLinks /><span>© 2026 <BrandText>Peregen AI</BrandText></span></footer>
     </main>
   )
 }
