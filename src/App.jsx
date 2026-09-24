@@ -88,7 +88,7 @@ function LogoMotion({ reduce, compact }) {
         animate={reduce ? undefined : { y: [0, -8, 0], rotate: [-1, 1, -1] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
       />
-      <span className="logo-caption">A system for becoming more capable.</span>
+      <span className="logo-caption">The architecture of persistent presence.</span>
     </div>
   )
 }
@@ -426,18 +426,18 @@ function App() {
           <motion.div className="hero-actions" {...fadeUp(reduce, 0.24)}><a className="button button--dark" href="#contact">Explore <BrandText>Peregen AI</BrandText> <ArrowUpRight size={17} /></a><a className="text-link" href="#why">Scroll to discover <ArrowDownRight size={16} /></a></motion.div>
         </div>
         <motion.div className="hero-visual" {...fadeUp(reduce, 0.18)}><LogoMotion reduce={reduce} compact={compact} /><div className="hero-index">01 <span>/</span> 05</div></motion.div>
-        <div className="hero-footer"><span>Built for the space between human instinct and machine scale.</span><span className="scroll-note">Scroll for more ↓</span></div>
+        <div className="hero-footer"><span>From digital companions to physical robotics: building the architecture of presence.</span><span className="scroll-note">Scroll for more ↓</span></div>
       </section>
 
       <section className="manifesto section-pad" id="why">
         <PremiseMedia />
         <motion.div className="section-kicker" {...fadeUp(reduce)}>01 / The premise</motion.div>
-        <div className="manifesto-grid"><motion.p className="manifesto-label" {...fadeUp(reduce, 0.08)}><BrandText>Peregen AI is not here to replace the human point of view.</BrandText></motion.p><motion.h2 {...fadeUp(reduce, 0.14)}>{siteContent.manifesto}</motion.h2></div>
+        <div className="manifesto-grid"><motion.p className="manifesto-label" {...fadeUp(reduce, 0.08)}><BrandText>Most AI is stateless, disposable, and forgotten when the session ends.</BrandText></motion.p><motion.h2 {...fadeUp(reduce, 0.14)}>{siteContent.manifesto}</motion.h2></div>
       </section>
 
       <section className="principles section-pad" id="principles">
         <PrinciplesMedia />
-        <motion.div className="section-heading" {...fadeUp(reduce)}><div className="section-kicker">02 / The approach</div><h2>Intelligence with a point of view.</h2></motion.div>
+        <motion.div className="section-heading" {...fadeUp(reduce)}><div className="section-kicker">02 / The approach</div><h2>Intelligence that endures.</h2></motion.div>
         <div className="principle-list">{siteContent.principles.map((principle, index) => <motion.article className={`principle-card principle-card--${principle.accent}`} key={principle.title} {...fadeUp(reduce, index * 0.08)}><span className="principle-number">{principle.number}</span><PortfolioOrbit /><div className="principle-copy"><h3>{principle.title}</h3><p><BrandText>{principle.description}</BrandText></p></div><ArrowUpRight className="principle-arrow" size={22} /></motion.article>)}</div>
       </section>
 
@@ -445,8 +445,8 @@ function App() {
         <CapabilitiesMedia compact={compact} />
         <motion.div className="capabilities-intro" {...fadeUp(reduce)}>
           <div className="section-kicker">03 / The work</div>
-          <h2>Bring the hard thing.</h2>
-          <p>From the first question to the final decision, <BrandText>Peregen AI</BrandText> helps you make meaningful progress.</p>
+          <h2>The architecture of presence.</h2>
+          <p>From persistent memory to embodied SDKs, <BrandText>Peregen AI</BrandText> builds the cognitive identity layer for what comes next.</p>
         </motion.div>
         <div className="capability-list">
           {siteContent.capabilities.map(([number, title, description]) => (
@@ -490,9 +490,9 @@ function App() {
         </div>
       </section>
 
-      <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">05 / Begin</div><h2>Make room for<br /><em>better thinking.</em></h2><p className="contact-lede">Early access is opening soon. Join the first circle.</p><form className="signup-form" action={`https://formsubmit.co/${siteContent.contact.email}`} method="POST" acceptCharset="UTF-8" onSubmit={submitEmail}><input type="hidden" name="_subject" value={siteContent.contact.signupSubject} /><input type="hidden" name="_template" value="table" /><input type="hidden" name="_captcha" value="false" /><input type="hidden" name="_next" value="https://peregenai.com/?joined=1#contact" /><input type="hidden" name="source" value="peregenai.com" /><label className="sr-only" htmlFor="email">Email address</label><input id="email" name="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" disabled={signupStatus === 'sent'} required /><label className="sr-only" htmlFor="company">Company</label><input className="signup-honey" id="company" name="_honey" type="text" tabIndex={-1} autoComplete="off" value={honey} onChange={(event) => setHoney(event.target.value)} /><button className="button button--light" type="submit" disabled={signupStatus === 'sent'}>{signupStatus === 'sent' ? 'You’re on the list' : 'Get early access'} <ArrowUpRight size={17} /></button></form>{signupStatus === 'sent' ? <p className="signup-status" role="status">You’re on the list. We’ll reach you at the address you sent.</p> : null}<div className="contact-details"><a href={`mailto:${siteContent.contact.email}`}>{siteContent.contact.email}</a><address>{siteContent.contact.address}</address></div></motion.div></section>
+      <section className="contact section-pad" id="contact"><motion.div {...fadeUp(reduce)}><div className="section-kicker">05 / Begin</div><h2>The future of presence<br /><em>is persistent.</em></h2><p className="contact-lede">Building the memory and persona layers for digital companions and next-generation robotics. Join the early access circle.</p><form className="signup-form" action={`https://formsubmit.co/${siteContent.contact.email}`} method="POST" acceptCharset="UTF-8" onSubmit={submitEmail}><input type="hidden" name="_subject" value={siteContent.contact.signupSubject} /><input type="hidden" name="_template" value="table" /><input type="hidden" name="_captcha" value="false" /><input type="hidden" name="_next" value="https://peregenai.com/?joined=1#contact" /><input type="hidden" name="source" value="peregenai.com" /><label className="sr-only" htmlFor="email">Email address</label><input id="email" name="email" type="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" disabled={signupStatus === 'sent'} required /><label className="sr-only" htmlFor="company">Company</label><input className="signup-honey" id="company" name="_honey" type="text" tabIndex={-1} autoComplete="off" value={honey} onChange={(event) => setHoney(event.target.value)} /><button className="button button--light" type="submit" disabled={signupStatus === 'sent'}>{signupStatus === 'sent' ? 'You’re on the list' : 'Get early access'} <ArrowUpRight size={17} /></button></form>{signupStatus === 'sent' ? <p className="signup-status" role="status">You’re on the list. We’ll reach you at the address you sent.</p> : null}<div className="contact-details"><a href={`mailto:${siteContent.contact.email}`}>{siteContent.contact.email}</a><address>{siteContent.contact.address}</address></div></motion.div></section>
 
-      <footer className="site-footer"><div className="brand"><BrandMark /><span><BrandText>Peregen AI</BrandText></span></div><span>Adaptive intelligence for human work.</span><SocialLinks /><span>© 2026 <BrandText>Peregen AI</BrandText></span></footer>
+      <footer className="site-footer"><div className="brand"><BrandMark /><span><BrandText>Peregen AI</BrandText></span></div><span>Persistent memory and persona engines for digital worlds and robotics.</span><SocialLinks /><span>© 2026 <BrandText>Peregen AI</BrandText></span></footer>
     </main>
   )
 }
